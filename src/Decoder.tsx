@@ -33,11 +33,16 @@ import {
   INFERENCE_BACKEND_OPTIONS,
   type InferenceBackend,
 } from "./utils/inferenceProtocol";
-import {
-  hasMatchingOption,
+import { hasMatchingOption,
   parseNumberOption,
   parseStringOption,
 } from "./utils/optionUtils";
+import {
+  UI_LOCALE_LABELS,
+  UI_LOCALE_OPTIONS,
+  useUILocale,
+  type UILocale,
+} from "./i18n";
 
 type DecoderMode = "normal" | "pileup" | "benchmark";
 type DecoderLanguage = "EN" | "EN/JA";
@@ -55,6 +60,7 @@ const BACKEND_OPTIONS: readonly InferenceBackend[] =
   INFERENCE_BACKEND_OPTIONS.map((option) => option.value);
 
 export const Decoder = () => {
+  const { locale: uiLocale, setLocale: setUiLocale, t } = useUILocale();
   const [mode, setMode] = usePersistedState<DecoderMode>(
     "decoder.mode",
     "normal",
@@ -401,11 +407,11 @@ export const Decoder = () => {
         style={controlRowStyle}
       >
         <NativeSelect
-          label="MODE"
+          label={t.mode}
           data={[
-            { value: "normal", label: "Normal" },
-            { value: "pileup", label: "Pileup" },
-            { value: "benchmark", label: "Benchmark" },
+            { value: "normal", label: t.normal },
+            { value: "pileup", label: t.pileup },
+            { value: "benchmark", label: t.benchmark },
           ]}
           value={mode}
           onChange={(event) => {
@@ -422,7 +428,7 @@ export const Decoder = () => {
         {!isBenchmark && (
           <>
             <NativeSelect
-              label="ENGINE"
+              label={t.engine}
               data={INFERENCE_BACKEND_OPTIONS}
               value={backend}
               onChange={(event) => {
@@ -447,11 +453,11 @@ export const Decoder = () => {
             wrap="wrap"
             style={controlRowStyle}
           >
-            <Tooltip label="Available after starting the decoder." withArrow>
+            <Tooltip label={t.inputTooltip} withArrow>
               <Box>
                 <NativeSelect
                   w={200}
-                  label="INPUT"
+                  label={t.input}
                   data={audioInputDevices.map((device) => ({
                     value: device.deviceId,
                     label:
@@ -469,7 +475,7 @@ export const Decoder = () => {
             {isPassthroughSupported && (
               <NativeSelect
                 w={200}
-                label="THRU"
+                label={t.thru}
                 data={[
                   { value: "", label: "None" },
                   ...audioOutputDevices.map((device) => ({
@@ -496,7 +502,7 @@ export const Decoder = () => {
             {!isPileup && (
               <>
                 <NativeSelect
-                  label="WINDOW"
+                  label={t.window}
                   data={DECODE_WINDOW_OPTIONS.map((seconds) => ({
                     value: seconds.toString(),
                     label: seconds.toString(),
@@ -515,12 +521,12 @@ export const Decoder = () => {
                   style={contentWidthSelectStyle}
                 />
                 <Tooltip
-                  label="Click the scope to move the decode band. Use the mouse wheel to fine-tune it."
+                  label={t.bandwidthTooltip}
                   withArrow
                 >
                   <Box>
                     <NativeSelect
-                      label="BANDWIDTH"
+                      label={t.bandwidth}
                       data={FILTER_WIDTH_OPTIONS.map((width) => ({
                         value: width.toString(),
                         label: width.toString(),
@@ -541,7 +547,7 @@ export const Decoder = () => {
                   </Box>
                 </Tooltip>
                 <NativeSelect
-                  label="CW LANG"
+                  label={t.cwLang}
                   data={["EN", "EN/JA"]}
                   value={language}
                   onChange={(event) => {
@@ -555,9 +561,38 @@ export const Decoder = () => {
                   }}
                   style={contentWidthSelectStyle}
                 />
+                <NativeSelect
+                  label={t.uiLang}
+                  data={UI_LOCALE_OPTIONS.map((value) => ({
+                    value,
+                    label: UI_LOCALE_LABELS[value],
+                  }))}
+                  value={uiLocale}
+                  onChange={(event) => {
+                    const next = parseStringOption(
+                      event.currentTarget.value,
+                      UI_LOCALE_OPTIONS,
+                    );
+                    if (next !== undefined) {
+                      setUiLocale(next as UILocale);
+                    }
+                  }}
+                  title={t.cwNote}
+                  style={contentWidthSelectStyle}
+                />
               </>
             )}
           </Flex>
+          {!isPileup && !isBenchmark && (
+            <Box
+              style={{
+                fontSize: "12px",
+                color: "var(--mantine-color-dimmed)",
+              }}
+            >
+              {t.cwNote}
+            </Box>
+          )}
         </>
       )}
     </Stack>
@@ -581,7 +616,7 @@ export const Decoder = () => {
                 }}
                 disabled={isLoading}
               >
-                {isActive ? "STOP" : "START"}
+                {isActive ? t.stop : t.start}
               </Button>
               <Box style={{ flex: 1, minWidth: 0, maxWidth: "400px" }}>
                 <LoadProgressBars progress={loadProgress} />

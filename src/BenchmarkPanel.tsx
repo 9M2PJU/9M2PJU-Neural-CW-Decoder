@@ -8,6 +8,7 @@ import {
 } from "./const";
 import { useLoadProgress } from "./hooks/useLoadProgress";
 import { LoadProgressBars } from "./LoadProgressBars";
+import { useUILocale } from "./i18n";
 import { loadModel, runInference } from "./utils/inference";
 import type { InferenceBackend } from "./utils/inferenceProtocol";
 
@@ -95,6 +96,7 @@ function buildReport(
   activeVariant: BenchmarkVariant | null,
   status: BenchmarkStatus,
   isRunning: boolean,
+  pressRunText: string,
 ): string {
   const lines = [
     "model: model_en",
@@ -109,13 +111,14 @@ function buildReport(
   ];
 
   if (!isRunning) {
-    lines.push("", "Press RUN to start benchmark.");
+    lines.push("", pressRunText);
   }
 
   return lines.join("\n");
 }
 
 export const BenchmarkPanel = () => {
+  const { t } = useUILocale();
   const [isRunning, setIsRunning] = useState(false);
   const [status, setStatus] = useState<BenchmarkStatus>(null);
   const [results, setResults] = useState<BenchmarkResult[]>([]);
@@ -244,7 +247,7 @@ export const BenchmarkPanel = () => {
               onClick={() => void runBenchmark()}
               disabled={isRunning}
             >
-              {isRunning ? "RUNNING..." : "RUN"}
+              {isRunning ? t.running : t.run}
             </Button>
             <Box style={{ flex: 1, minWidth: 0, maxWidth: "400px" }}>
               {isRunning && activeVariant ? (
@@ -267,7 +270,7 @@ export const BenchmarkPanel = () => {
             whiteSpace: "pre-wrap",
           }}
         >
-          {buildReport(results, activeVariant, status, isRunning)}
+          {buildReport(results, activeVariant, status, isRunning, t.pressRun)}
         </Box>
       </Box>
     </Stack>

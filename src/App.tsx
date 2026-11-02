@@ -3,8 +3,10 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { DEFAULT_CONTAINER_WIDTH_PX, WIDE_LAYOUT_WIDTH_PX } from "./const";
 import { Decoder } from "./Decoder";
+import { useUILocale } from "./i18n";
 
 function App() {
+  const { t } = useUILocale();
   const useWideContainer = useMediaQuery(
     `(min-width: ${WIDE_LAYOUT_WIDTH_PX}px)`,
     true,
@@ -69,7 +71,7 @@ function App() {
                       void updateServiceWorker(true);
                     }}
                   >
-                    Update
+                    {t.update}
                   </Button>
                 ) : null}
                 <Text size="xs" c="dimmed">
@@ -81,8 +83,19 @@ function App() {
         </Box>
         <Decoder />
         <Box px={8}>
-          <Flex justify="right">
-            <Text component="a" c="dimmed" href="https://github.com/e04/">
+          <Flex justify="space-between" wrap="wrap" gap={4}>
+            <Text size="xs" c="dimmed">
+              Fork by 9M2PJU (9m2pju.hamradio.my) — BM/ID UI, Rumi QSO aid. Upstream:{" "}
+              <Text
+                component="a"
+                c="dimmed"
+                href="https://github.com/e04/web-deep-cw-decoder/"
+                td="underline"
+              >
+                e04/web-deep-cw-decoder
+              </Text>
+            </Text>
+            <Text component="a" size="xs" c="dimmed" href="https://github.com/e04/">
               Copyright © 2026 e04
             </Text>
           </Flex>
