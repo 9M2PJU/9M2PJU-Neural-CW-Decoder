@@ -85,7 +85,16 @@ function App() {
         <Box px={8}>
           <Flex justify="space-between" wrap="wrap" gap={4}>
             <Text size="xs" c="dimmed">
-              Fork by 9M2PJU (9m2pju.hamradio.my) — BM/ID UI, Rumi QSO aid. Upstream:{" "}
+              Fork by{" "}
+              <Text
+                component="a"
+                c="dimmed"
+                href="https://hamradio.my"
+                td="underline"
+              >
+                9M2PJU
+              </Text>{" "}
+              — BM UI option, Rumi QSO aid. Upstream:{" "}
               <Text
                 component="a"
                 c="dimmed"
